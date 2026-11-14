@@ -136,11 +136,10 @@ export const SITE = {
 
   // ---- Social media (edit links; shown in footer + on the Reviews page) ----
   socials: [
-    { id: "instagram", name: "Instagram", href: "https://instagram.com/peakr", icon: "instagram" },
-    { id: "telegram",  name: "Telegram",  href: "https://t.me/peakr",          icon: "send" },
-    { id: "tiktok",    name: "TikTok",    href: "https://tiktok.com/@peakr",    icon: "tiktok" },
-    { id: "youtube",   name: "YouTube",   href: "https://youtube.com/@peakr",   icon: "youtube" },
-    { id: "x",         name: "X",         href: "https://x.com/peakr",          icon: "x" },
+    { id: "instagram", name: "Instagram", href: "https://www.instagram.com/egolab_shop/", icon: "instagram" },
+    { id: "telegram",  name: "Telegram",  href: "https://t.me/egolab_shop",                icon: "send" },
+    { id: "tiktok",    name: "TikTok",    href: "https://www.tiktok.com/@egolabshop",      icon: "tiktok" },
+    { id: "email",     name: "Email",     href: "mailto:egolab@mailfence.com",             icon: "mail" },
   ],
 
   // ---- Order & support delivery to the seller (works on static hosting) -----

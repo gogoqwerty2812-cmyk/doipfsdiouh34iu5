@@ -1,7 +1,7 @@
-import { SITE } from "../config.js?v=27";
-import { getPublishedReviews, getPublishedSettings } from "../db.js?v=27";
-import { icon, esc, safeUrl, initTheme, mountChrome, revealOnScroll, pageHero, countUp } from "../ui.js?v=27";
-import { getLang } from "../i18n.js?v=27";
+import { SITE } from "../config.js?v=28";
+import { getPublishedReviews, getPublishedSettings } from "../db.js?v=28";
+import { icon, esc, safeUrl, initTheme, mountChrome, revealOnScroll, pageHero, countUp, socialHref } from "../ui.js?v=28";
+import { getLang } from "../i18n.js?v=28";
 
 initTheme();
 
@@ -108,7 +108,7 @@ async function init() {
         <h2>${esc(x.followTitle)}</h2>
         <p class="muted" style="max-width:42ch;margin:10px auto 0">${esc(x.followDesc)}</p>
         <div class="socials">
-          ${socials.map((s) => `<a class="social" href="${esc(safeUrl(s.href))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.name)}">${icon(s.icon, 20)}</a>`).join("")}
+          ${socials.map((s) => `<a class="social" href="${esc(safeUrl(socialHref(s.href)))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.name)}">${icon(s.icon, 20)}</a>`).join("")}
         </div>
       </div>
     </section>`;

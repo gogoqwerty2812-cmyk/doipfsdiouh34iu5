@@ -1,10 +1,10 @@
 // =============================================================================
 //  ui.js — shared chrome: header, footer, theme, toasts, icons, helpers
 // =============================================================================
-import { SITE } from "./config.js?v=27";
-import { Cart } from "./store.js?v=27";
-import { getPublishedSettings } from "./db.js?v=27";
-import { t, getLang, setLang, LANGUAGES } from "./i18n.js?v=27";
+import { SITE } from "./config.js?v=28";
+import { Cart } from "./store.js?v=28";
+import { getPublishedSettings } from "./db.js?v=28";
+import { t, getLang, setLang, LANGUAGES } from "./i18n.js?v=28";
 
 // ---- Icons (inline SVG, Lucide-style) --------------------------------------
 export const icon = (name, size = 20) => {
@@ -241,6 +241,13 @@ export function pageHero({ eyebrow = "", title = "", subtitle = "", color = "#94
   </section>`;
 }
 
+// Social links come from the admin panel, where an email may be typed without
+// "mailto:" — that would open a broken page on our own site instead of mail.
+export function socialHref(href) {
+  const h = String(href || "").trim();
+  return /^[^\s@/:]+@[^\s@/]+\.[^\s@/]+$/.test(h) ? `mailto:${h}` : h;
+}
+
 export function mountChrome(activePage = "index.html") {
   // language
   document.documentElement.lang = getLang();
@@ -303,7 +310,7 @@ export function mountChrome(activePage = "index.html") {
         <a class="navlink" href="admin.html">${t("nav_admin")}</a>
       </div>
       <div class="socials" id="footerSocials">
-        ${(SITE.socials || []).map((sc) => `<a class="social" href="${esc(safeUrl(sc.href))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(sc.name)}">${icon(sc.icon, 18)}</a>`).join("")}
+        ${(SITE.socials || []).map((sc) => `<a class="social" href="${esc(safeUrl(socialHref(sc.href)))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(sc.name)}">${icon(sc.icon, 18)}</a>`).join("")}
       </div>
       <small>© ${year} ${esc(SITE.name)}.</small>
     </div>`;
@@ -313,7 +320,7 @@ export function mountChrome(activePage = "index.html") {
   getPublishedSettings().then((s) => {
     const box = document.getElementById("footerSocials");
     if (box && s && Array.isArray(s.socials) && s.socials.length) {
-      box.innerHTML = s.socials.map((sc) => `<a class="social" href="${esc(safeUrl(sc.href))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(sc.name || "")}">${icon(sc.icon, 18)}</a>`).join("");
+      box.innerHTML = s.socials.map((sc) => `<a class="social" href="${esc(safeUrl(socialHref(sc.href)))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(sc.name || "")}">${icon(sc.icon, 18)}</a>`).join("");
     }
   }).catch(() => {});
 
