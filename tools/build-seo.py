@@ -6,6 +6,7 @@
 #   <slug>.html        info pages (privacy policy…), from pages/_src/<slug>.html
 #   p/<slug>.html      one static page per product, from data/content.json
 #   p/index.html       all products by category
+#   lab-reports.html   lab reports (certificates) as plain HTML, from data/content.json
 #   sitemap.xml        every public page, for Google Search Console / Bing
 #   llms.txt           a plain-text map of the store for AI assistants
 #
@@ -320,10 +321,52 @@ def existing_products():
     return out
 
 
+# ---- lab reports ------------------------------------------------------------------
+def build_certs():
+    """lab-reports.html: every certificate from content.json as readable HTML
+    (certificates.html is rendered by JavaScript, which AI crawlers skip)."""
+    src = ROOT / "data" / "content.json"
+    if not src.exists():
+        return 0
+    data = json.loads(src.read_text(encoding="utf-8-sig"))
+    certs = [c for c in (data.get("certificates") if isinstance(data, dict) else None) or [] if isinstance(c, dict)]
+    certs.sort(key=lambda c: c.get("createdAt") or 0, reverse=True)
+    rows, items = [], []
+    for c in certs:
+        title, issuer, when, cat = (str(c.get(k) or "").strip() for k in ("title", "issuer", "date", "category"))
+        img = c.get("image") if isinstance(c.get("image"), str) and not str(c.get("image")).startswith("data:") else ""
+        img_abs = f"{SITE}/{img}" if img and not img.startswith("http") else img
+        facts = " · ".join(x for x in [f"Lab: {esc(issuer)}" if issuer else "", f"Date: {esc(when)}" if when else "",
+                                       esc(cat)] if x)
+        thumb = f'<a href="{esc(img)}" target="_blank" rel="noopener"><img src="{esc(img)}" alt="Lab report: {esc(title)}" loading="lazy"></a>' if img else ""
+        link = f' <a href="{esc(img)}" target="_blank" rel="noopener">View full report</a>' if img else ""
+        rows.append(f'      <section class="cert-row">{thumb}<div><h2>{esc(title or "Lab report")}</h2>'
+                    f'<p>{facts}{link}</p></div></section>')
+        items.append({"@type": "ListItem", "position": len(items) + 1, "name": title or "Lab report",
+                      **({"url": img_abs} if img_abs else {})})
+    nav, crumb_ld = crumbs([("Home", ""), ("Lab reports", None)])
+    body = "\n".join(rows) or "      <p>Lab reports are being added. Ask us for the report for your batch.</p>"
+    content = f"""    <div class="article article--wide">
+      {nav}
+      <h1>Lab reports</h1>
+      <p class="lead">Third-party test results (certificates of analysis) for products we sell — {len(certs)} report{'s' if len(certs) != 1 else ''}. Each one shows what was tested, by which lab and when. Need the report for a specific batch? <a href="support.html">Ask us</a>.</p>
+      <p>New to reading them? See <a href="blog/how-to-read-supplement-lab-report.html">how to read a supplement lab report</a>.</p>
+{body}
+    </div>"""
+    list_ld = {"@context": "https://schema.org", "@type": "ItemList", "name": f"{NAME} lab reports", "itemListElement": items}
+    (ROOT / "lab-reports.html").write_text(
+        page(title=f"Lab reports — third-party supplement testing | {NAME}",
+             description=f"{len(certs)} third-party lab reports (certificates of analysis) for EgoLab products: lab, date and full report.",
+             path="lab-reports.html", body=content, nav="certificates.html", jsonld=[list_ld, crumb_ld]), encoding="utf-8")
+    return len(certs)
+
+
 # ---- sitemap + llms.txt ------------------------------------------------------
 def build_sitemap(posts, products, info=()):
     urls = [(absurl(p), pr, TODAY) for p, pr in APP_PAGES]
     urls += [(absurl(f"{m['slug']}.html"), "0.3", m['updated']) for m in info]
+    if (ROOT / "lab-reports.html").exists():
+        urls.append((absurl("lab-reports.html"), "0.7", TODAY))
     urls.append((absurl("blog/index.html"), "0.7", TODAY))
     urls += [(absurl(f"blog/{m['slug']}.html"), "0.8", m.get("updated", m["date"])) for m in posts]
     if products or (ROOT / "p" / "index.html").exists():
@@ -347,7 +390,7 @@ def build_llms(posts, products, info=()):
              "## Store",
              f"- [Catalog]({SITE}/): browse and buy products",
              f"- [All products]({absurl("p/index.html")}): static list of every product with price",
-             f"- [Lab reports]({absurl("certificates.html")}): third-party test results",
+             f"- [Lab reports]({absurl('lab-reports.html' if (ROOT / 'lab-reports.html').exists() else 'certificates.html')}): third-party test results (certificates of analysis)",
              f"- [Shipping & payment FAQ]({absurl("blog/egolab-shipping-and-payment-faq.html")})",
              f"- [Support]({absurl("support.html")}): email {EMAIL}, Telegram {TELEGRAM}", "",
              *[f"- [{m['title']}]({absurl(m['slug'] + '.html')}): {m['description']}" for m in info], "",
@@ -367,6 +410,7 @@ def main():
     posts = build_blog()
     info = build_pages()
     products = existing_products() if "--no-products" in sys.argv else build_products()
+    certs = None if "--no-products" in sys.argv else build_certs()
     n = build_sitemap(posts, products, info)
     build_llms(posts, products, info)
     print("SEO pages ready:")
@@ -374,6 +418,7 @@ def main():
     print(f"  info pages:    {len(info)}  ({', '.join(m['slug'] + '.html' for m in info)})")
     print(f"  product pages: {len(products)}  (p/)" + ("  — kept as built, not rebuilt" if "--no-products" in sys.argv else ""))
     print(f"  sitemap.xml:   {n} URLs")
+    print(f"  lab reports:   {certs}  (lab-reports.html)" if certs is not None else "  lab reports:   kept as built, not rebuilt")
     print("  llms.txt:      updated")
 
 

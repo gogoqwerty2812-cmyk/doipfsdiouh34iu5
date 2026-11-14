@@ -5,11 +5,14 @@
 ## Store
 - [Catalog](https://egolab.shop/): browse and buy products
 - [All products](https://egolab.shop/p/): static list of every product with price
-- [Lab reports](https://egolab.shop/certificates): third-party test results
+- [Lab reports](https://egolab.shop/certificates): third-party test results (certificates of analysis)
 - [Shipping & payment FAQ](https://egolab.shop/blog/egolab-shipping-and-payment-faq)
 - [Support](https://egolab.shop/support): email egolab@mailfence.com, Telegram https://t.me/egolab_shop
 
+- [About EgoLab](https://egolab.shop/about): EgoLab is an online sports nutrition store: genuine protein, creatine, pre-workout, vitamins and gym accessories with lab reports, shipped to the US, UK and Europe.
 - [Privacy policy](https://egolab.shop/privacy): How EgoLab collects, uses, shares and protects your personal data when you browse the site and place an order, and how to exercise your rights.
+- [Returns and refunds](https://egolab.shop/returns): EgoLab returns and refunds: 14 days to return unopened products, free replacement for damaged or wrong items, and how refunds for card and crypto payments work.
+- [Terms of sale](https://egolab.shop/terms): EgoLab terms of sale: how orders, prices, payment by card or crypto, shipping, customs, returns and product information work when you buy from egolab.shop.
 
 ## Articles
 - [Creatine monohydrate: how much to take, when, and what to expect](https://egolab.shop/blog/creatine-monohydrate-dosage): A practical creatine guide: the 3–5 g daily dose, whether you need a loading phase, timing, water weight, safety and which form to buy.

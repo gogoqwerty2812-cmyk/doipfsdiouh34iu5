@@ -1,9 +1,9 @@
-import { SITE, US_STATES, COUNTRIES } from "../config.js?v=26";
-import { Cart } from "../store.js?v=26";
-import { createOrder, updateOrder, deleteOrder } from "../db.js?v=26";
-import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=26";
-import { t } from "../i18n.js?v=26";
-import { sendOrderNotification } from "../notify.js?v=26";
+import { SITE, US_STATES, COUNTRIES } from "../config.js?v=27";
+import { Cart } from "../store.js?v=27";
+import { createOrder, updateOrder, deleteOrder } from "../db.js?v=27";
+import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=27";
+import { t } from "../i18n.js?v=27";
+import { sendOrderNotification } from "../notify.js?v=27";
 
 initTheme();
 
