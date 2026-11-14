@@ -1,9 +1,9 @@
-import { SITE, US_STATES, COUNTRIES } from "../config.js?v=25";
-import { Cart } from "../store.js?v=25";
-import { createOrder, updateOrder, deleteOrder } from "../db.js?v=25";
-import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=25";
-import { t } from "../i18n.js?v=25";
-import { sendOrderNotification } from "../notify.js?v=25";
+import { SITE, US_STATES, COUNTRIES } from "../config.js?v=26";
+import { Cart } from "../store.js?v=26";
+import { createOrder, updateOrder, deleteOrder } from "../db.js?v=26";
+import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=26";
+import { t } from "../i18n.js?v=26";
+import { sendOrderNotification } from "../notify.js?v=26";
 
 initTheme();
 
@@ -310,9 +310,8 @@ function init() {
             <div class="field" data-field="consent" style="margin-top:var(--space-4)">
               <label class="consent" for="consent">
                 <input type="checkbox" id="consent" name="consent">
-                <span>${t("consent_label")} <button type="button" class="linklike" id="consentMore" aria-expanded="false" aria-controls="consentText">${t("consent_more")}</button></span>
+                <span>${t("consent_label")} <a class="linklike" href="privacy.html" target="_blank" rel="noopener">${t("nav_privacy")}</a></span>
               </label>
-              <div class="consent__text" id="consentText" hidden>${t("consent_text")}</div>
               <div class="error-text"></div>
             </div>
             <button class="btn btn--primary btn--block btn--lg" type="submit" id="submitBtn" style="margin-top:var(--space-4)">
@@ -406,13 +405,7 @@ function init() {
     });
   });
 
-  // data-processing consent: expandable explanation, error clears on tick
-  const consentMore = document.getElementById("consentMore");
-  consentMore.addEventListener("click", () => {
-    const txt = document.getElementById("consentText");
-    txt.hidden = !txt.hidden;
-    consentMore.setAttribute("aria-expanded", String(!txt.hidden));
-  });
+  // data-processing consent: the error clears as soon as the box is ticked
   document.getElementById("consent").addEventListener("change", (e) => { if (e.target.checked) setError("consent", ""); });
 
   // submit

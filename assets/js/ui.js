@@ -1,10 +1,10 @@
 // =============================================================================
 //  ui.js — shared chrome: header, footer, theme, toasts, icons, helpers
 // =============================================================================
-import { SITE } from "./config.js?v=25";
-import { Cart } from "./store.js?v=25";
-import { getPublishedSettings } from "./db.js?v=25";
-import { t, getLang, setLang, LANGUAGES } from "./i18n.js?v=25";
+import { SITE } from "./config.js?v=26";
+import { Cart } from "./store.js?v=26";
+import { getPublishedSettings } from "./db.js?v=26";
+import { t, getLang, setLang, LANGUAGES } from "./i18n.js?v=26";
 
 // ---- Icons (inline SVG, Lucide-style) --------------------------------------
 export const icon = (name, size = 20) => {
@@ -295,6 +295,7 @@ export function mountChrome(activePage = "index.html") {
         <a class="navlink" href="certificates.html">${t("nav_certs")}</a>
         <a class="navlink" href="blog/index.html">${t("nav_blog")}</a>
         <a class="navlink" href="support.html">${t("nav_support")}</a>
+        <a class="navlink" href="privacy.html">${t("nav_privacy")}</a>
         <a class="navlink" href="cart.html">${t("nav_cart")}</a>
         <a class="navlink" href="admin.html">${t("nav_admin")}</a>
       </div>

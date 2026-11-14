@@ -3,6 +3,7 @@
 #
 #   blog/<slug>.html   articles, from blog/_src/<slug>.html (JSON header + HTML body)
 #   blog/index.html    list of articles
+#   <slug>.html        info pages (privacy policy…), from pages/_src/<slug>.html
 #   p/<slug>.html      one static page per product, from data/content.json
 #   p/index.html       all products by category
 #   sitemap.xml        every public page, for Google Search Console / Bing
@@ -178,6 +179,32 @@ def build_blog():
     return [m for m, _ in posts]
 
 
+# ---- info pages (privacy policy, …) ------------------------------------------
+def build_pages():
+    """pages/_src/<slug>.html -> <slug>.html at the site root (same header format as articles)."""
+    built = []
+    for f in sorted((ROOT / "pages" / "_src").glob("*.html")):
+        m = re.match(r"\s*<!--(.*?)-->(.*)", f.read_text(encoding="utf-8"), re.S)
+        if not m:
+            print(f"  ! skipped {f.name}: no JSON header")
+            continue
+        meta, body = json.loads(m.group(1)), m.group(2).strip()
+        meta["slug"] = f.stem
+        path = f"{f.stem}.html"
+        nav, crumb_ld = crumbs([("Home", ""), (meta["title"], None)])
+        updated = date.fromisoformat(meta["updated"]).strftime("%d %B %Y")
+        content = f"""    <article class="article">
+      {nav}
+      <h1>{esc(meta['title'])}</h1>
+      <p class="article__meta">Last updated: <time datetime="{meta['updated']}">{updated}</time></p>
+      {body}
+    </article>"""
+        (ROOT / path).write_text(page(title=f"{meta['title']} | {NAME}", description=meta["description"], path=path,
+                                      body=content, nav=meta.get("nav", ""), jsonld=[crumb_ld]), encoding="utf-8")
+        built.append(meta)
+    return built
+
+
 # ---- products -----------------------------------------------------------------
 def slugify(s):
     return re.sub(r"-{2,}", "-", re.sub(r"[^a-z0-9]+", "-", str(s).lower())).strip("-") or "item"
@@ -294,8 +321,9 @@ def existing_products():
 
 
 # ---- sitemap + llms.txt ------------------------------------------------------
-def build_sitemap(posts, products):
+def build_sitemap(posts, products, info=()):
     urls = [(absurl(p), pr, TODAY) for p, pr in APP_PAGES]
+    urls += [(absurl(f"{m['slug']}.html"), "0.3", m['updated']) for m in info]
     urls.append((absurl("blog/index.html"), "0.7", TODAY))
     urls += [(absurl(f"blog/{m['slug']}.html"), "0.8", m.get("updated", m["date"])) for m in posts]
     if products or (ROOT / "p" / "index.html").exists():
@@ -308,7 +336,7 @@ def build_sitemap(posts, products):
     return len(urls)
 
 
-def build_llms(posts, products):
+def build_llms(posts, products, info=()):
     lines = [f"# {NAME}", "",
              f"> {NAME} ({SITE}) is an online sports nutrition store selling protein, creatine, pre-workout, "
              "vitamins, recovery products and gym accessories, with third-party lab reports. "
@@ -322,6 +350,7 @@ def build_llms(posts, products):
              f"- [Lab reports]({absurl("certificates.html")}): third-party test results",
              f"- [Shipping & payment FAQ]({absurl("blog/egolab-shipping-and-payment-faq.html")})",
              f"- [Support]({absurl("support.html")}): email {EMAIL}, Telegram {TELEGRAM}", "",
+             *[f"- [{m['title']}]({absurl(m['slug'] + '.html')}): {m['description']}" for m in info], "",
              "## Articles"]
     lines += [f"- [{m['title']}]({absurl(f"blog/{m['slug']}.html")}): {m['description']}" for m in posts]
     if products:
@@ -336,11 +365,13 @@ def build_llms(posts, products):
 
 def main():
     posts = build_blog()
+    info = build_pages()
     products = existing_products() if "--no-products" in sys.argv else build_products()
-    n = build_sitemap(posts, products)
-    build_llms(posts, products)
+    n = build_sitemap(posts, products, info)
+    build_llms(posts, products, info)
     print("SEO pages ready:")
     print(f"  articles:      {len(posts)}  (blog/)")
+    print(f"  info pages:    {len(info)}  ({', '.join(m['slug'] + '.html' for m in info)})")
     print(f"  product pages: {len(products)}  (p/)" + ("  — kept as built, not rebuilt" if "--no-products" in sys.argv else ""))
     print(f"  sitemap.xml:   {n} URLs")
     print("  llms.txt:      updated")
