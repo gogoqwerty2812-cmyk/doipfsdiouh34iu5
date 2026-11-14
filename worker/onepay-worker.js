@@ -30,6 +30,7 @@ const PROMO_CODES = {
   megaa15: 15,
   ego20: 20,
   testosterone25: 25,
+  egolab2027: 13,
 };
 const SHIPPING = { fee: 17, freeThreshold: 99 };
 

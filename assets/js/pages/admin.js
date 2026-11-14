@@ -1,6 +1,6 @@
-import { SITE, ORDER_STATUSES } from "../config.js?v=24";
-import { getProducts, saveProduct, deleteProduct, getOrders, updateOrderStatus, deleteOrder, getTickets, deleteTicket, ensureAdminSeed, exportProductsJSON, importProductsFromJSON, getCerts, saveCert, deleteCert, ensureCertAdminSeed, exportCertsJSON, importCertsFromJSON, getReviews, saveReview, deleteReview, ensureReviewAdminSeed, exportReviewsJSON, importReviewsFromJSON, getSettings, saveSettings, ensureSettingsAdminSeed, exportSettingsJSON, exportAllJSON, importAllFromJSON } from "../db.js?v=24";
-import { icon, money, esc, placeholder, initTheme, mountChrome, toast } from "../ui.js?v=24";
+import { SITE, ORDER_STATUSES } from "../config.js?v=25";
+import { getProducts, saveProduct, deleteProduct, getOrders, updateOrderStatus, deleteOrder, getTickets, deleteTicket, ensureAdminSeed, exportProductsJSON, importProductsFromJSON, getCerts, saveCert, deleteCert, ensureCertAdminSeed, exportCertsJSON, importCertsFromJSON, getReviews, saveReview, deleteReview, ensureReviewAdminSeed, exportReviewsJSON, importReviewsFromJSON, getSettings, saveSettings, ensureSettingsAdminSeed, exportSettingsJSON, exportAllJSON, importAllFromJSON } from "../db.js?v=25";
+import { icon, money, esc, placeholder, initTheme, mountChrome, toast } from "../ui.js?v=25";
 
 initTheme();
 
