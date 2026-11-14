@@ -1,9 +1,9 @@
-import { SITE, US_STATES, COUNTRIES } from "../config.js?v=23";
-import { Cart } from "../store.js?v=23";
-import { createOrder, updateOrder, deleteOrder } from "../db.js?v=23";
-import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=23";
-import { t } from "../i18n.js?v=23";
-import { sendOrderNotification } from "../notify.js?v=23";
+import { SITE, US_STATES, COUNTRIES } from "../config.js?v=24";
+import { Cart } from "../store.js?v=24";
+import { createOrder, updateOrder, deleteOrder } from "../db.js?v=24";
+import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=24";
+import { t } from "../i18n.js?v=24";
+import { sendOrderNotification } from "../notify.js?v=24";
 
 initTheme();
 
@@ -264,6 +264,10 @@ function init() {
                 <input class="input" id="address" name="address" placeholder="${t("addr_ph")}" autocomplete="address-line1">
                 <div class="error-text"></div>
               </div>
+              <div class="field" data-field="note">
+                <label class="label" for="note">${t("delivery_note")}</label>
+                <textarea class="textarea" id="note" name="note" rows="2" maxlength="500" placeholder="${t("delivery_note_ph")}"></textarea>
+              </div>
               <div class="field" data-field="phone">
                 <label class="label" for="phone">${t("phone")}</label>
                 <input class="input" id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000">
@@ -463,6 +467,7 @@ function init() {
         city: f.city.value.trim(),
         zip: f.zip.value.trim(),
         address: f.address.value.trim(),
+        note: f.note.value.trim().slice(0, 500), // optional delivery comment
         phone: f.phone.value.trim(),
         contacts,
         // kept for backward compatibility with earlier orders / views

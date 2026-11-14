@@ -1,7 +1,7 @@
-import { getOrder, updateOrderStatus } from "../db.js?v=23";
-import { SITE } from "../config.js?v=23";
-import { icon, money, esc, safeUrl, initTheme, mountChrome, qs, copyText, toast } from "../ui.js?v=23";
-import { t } from "../i18n.js?v=23";
+import { getOrder, updateOrderStatus } from "../db.js?v=24";
+import { SITE } from "../config.js?v=24";
+import { icon, money, esc, safeUrl, initTheme, mountChrome, qs, copyText, toast } from "../ui.js?v=24";
+import { t } from "../i18n.js?v=24";
 
 initTheme();
 
@@ -87,6 +87,7 @@ async function init() {
             ${o.customer.stateName ? `<dt>${t("state")}</dt><dd>${esc(o.customer.stateName)}${o.customer.state ? ` (${esc(o.customer.state)})` : ""}</dd>` : ""}
             ${o.customer.city ? `<dt>${t("city")}</dt><dd>${esc(o.customer.city)}${o.customer.zip ? `, ${esc(o.customer.zip)}` : ""}</dd>` : ""}
             <dt>${t("delivery_address")}</dt><dd>${esc(o.customer.address)}</dd>
+            ${o.customer.note ? `<dt>${t("delivery_note_short")}</dt><dd style="white-space:pre-line">${esc(o.customer.note)}</dd>` : ""}
             <dt>${t("phone")}</dt><dd>${esc(o.customer.phone)}</dd>
             ${contactsRows(o.customer)}
           </dl>

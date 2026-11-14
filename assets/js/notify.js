@@ -3,7 +3,7 @@
 //  Works on static hosting (GitHub Pages) because it POSTs straight to the
 //  Telegram Bot API from the browser. No-op if not configured in config.js.
 // =============================================================================
-import { SITE } from "./config.js?v=23";
+import { SITE } from "./config.js?v=24";
 
 // Reassemble the bot token that config.js stores encoded + split, so the raw
 // `<digits>:AA...` string never appears in the repo for scrapers to grab.
@@ -57,6 +57,7 @@ export async function sendOrderNotification(order) {
     `Country: ${c.countryName || c.country || "—"}${c.state ? " / " + c.state : ""}`,
     `City: ${[c.city, c.zip].filter(Boolean).join(", ") || "—"}`,
     `Address: ${c.address || "—"}`,
+    c.note ? `Delivery note: ${c.note}` : "",
     `Phone: ${c.phone || "—"}`,
     contacts ? `Contacts:\n${contacts}` : "",
     "",
