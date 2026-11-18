@@ -1,9 +1,9 @@
-import { SITE, US_STATES, COUNTRIES } from "../config.js?v=28";
-import { Cart } from "../store.js?v=28";
-import { createOrder, updateOrder, deleteOrder } from "../db.js?v=28";
-import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=28";
-import { t } from "../i18n.js?v=28";
-import { sendOrderNotification } from "../notify.js?v=28";
+import { SITE, US_STATES, COUNTRIES } from "../config.js?v=29";
+import { Cart } from "../store.js?v=29";
+import { createOrder, updateOrder, deleteOrder } from "../db.js?v=29";
+import { icon, money, esc, initTheme, mountChrome, toast, copyText, pageHero } from "../ui.js?v=29";
+import { t } from "../i18n.js?v=29";
+import { sendOrderNotification } from "../notify.js?v=29";
 
 initTheme();
 
@@ -122,7 +122,7 @@ function methodCards() {
 }
 
 function contactFields() {
-  return SITE.checkoutContacts.map((c) => `
+  return SITE.checkoutContacts.filter((c) => c.id !== "telegram").map((c) => `
     <div class="field" data-field="${c.id}">
       <label class="label" for="${c.id}" style="display:flex;align-items:center;gap:6px;color:var(--fg-muted);font-weight:500">${icon(c.icon, 14)} ${esc(c.label)}</label>
       <input class="input" id="${c.id}" name="${c.id}" type="${c.type}" placeholder="${esc(c.placeholder)}" autocomplete="off">
@@ -188,9 +188,11 @@ const rules = {
   state: (v) => (v ? "" : t("err_state")),
   phone: (v) => {
     const digits = v.replace(/\D/g, "");
-    if (!v.trim()) return ""; // optional — but at least one contact is required (see submit)
+    if (!v.trim()) return ""; // optional
     return digits.length >= 7 && digits.length <= 15 ? "" : t("err_phone");
   },
+  // required: Telegram username — "@name", "name" or a t.me/name link
+  telegram: (v) => (tgUsername(v) ? "" : t("err_telegram")),
   txhash: (v) => {
     const val = v.trim();
     if (!val) return t("err_txhash");
@@ -198,8 +200,14 @@ const rules = {
     return /^[A-Za-z0-9+/=_-]{8,}$/.test(val) ? "" : t("err_txhash");
   },
 };
+// Telegram usernames: 5–32 characters, letters, digits and "_", starting with a letter.
+function tgUsername(v) {
+  const name = String(v || "").trim().replace(/^(https?:\/\/)?(www\.)?(t\.me|telegram\.me)\//i, "").replace(/^@/, "").replace(/\/+$/, "");
+  return /^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(name) ? `@${name}` : "";
+}
+
 // state is required only when the country is the United States
-const REQUIRED = ["country", "city", "address", "txhash"];
+const REQUIRED = ["country", "city", "address", "telegram", "txhash"];
 
 function setError(name, msg) {
   const field = document.querySelector(`[data-field="${name}"]`);
@@ -273,11 +281,16 @@ function init() {
                 <input class="input" id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000">
                 <div class="error-text"></div>
               </div>
-              <div class="field" data-field="contact" style="gap:0">
-                <div class="label" style="margin-bottom:2px">${t("contact_more_title")} <span class="req">*</span></div>
-                <div class="hint" style="margin-top:0;margin-bottom:12px">${t("contact_any_hint")}</div>
-                <div class="contacts-grid">${contactFields()}</div>
+              <div class="field" data-field="telegram">
+                <label class="label" for="telegram" style="display:flex;align-items:center;gap:6px">${icon("send", 14)} Telegram <span class="req">*</span></label>
+                <input class="input" id="telegram" name="telegram" placeholder="@username" autocomplete="off" autocapitalize="off" spellcheck="false">
+                <div class="hint">${t("tg_hint")}</div>
                 <div class="error-text"></div>
+              </div>
+              <div>
+                <div class="label" style="margin-bottom:2px">${t("contact_more_title")}</div>
+                <div class="hint" style="margin-top:0;margin-bottom:12px">${t("contact_more_hint")}</div>
+                <div class="contacts-grid">${contactFields()}</div>
               </div>
             </div>
           </section>
@@ -387,21 +400,13 @@ function init() {
   });
 
   // live validation on blur
-  ["country", "city", "address", "phone", "txhash", "state"].forEach((name) => {
+  ["country", "city", "address", "phone", "telegram", "txhash", "state"].forEach((name) => {
     const el = document.getElementById(name);
     if (!el) return;
     el.addEventListener("blur", () => validateField(name, el.value));
     el.addEventListener("input", () => {
       const field = document.querySelector(`[data-field="${name}"]`);
       if (field && field.classList.contains("field--invalid")) validateField(name, el.value);
-    });
-  });
-
-  ["phone", ...SITE.checkoutContacts.map((c) => c.id)].forEach((id) => {
-    document.getElementById(id)?.addEventListener("input", (e) => {
-      if (!e.target.value.trim()) return;
-      setError("contact", "");
-      if (id !== "phone") validateField("phone", document.getElementById("phone").value);
     });
   });
 
@@ -418,13 +423,9 @@ function init() {
     if (noTxHash()) required = required.filter((n) => n !== "txhash");
     let ok = true;
     required.forEach((n) => { if (!validateField(n, f[n].value)) ok = false; });
-    if (!validateField("phone", f.phone.value)) ok = false;
-    // phone is optional, but we need at least one way to reach the buyer
-    const hasContact = !!f.phone.value.trim() || SITE.checkoutContacts.some((c) => f[c.id]?.value.trim());
+    if (!validateField("phone", f.phone.value)) ok = false; // optional, checked only if filled
     setError("consent", f.consent.checked ? "" : t("err_consent"));
     if (!f.consent.checked) ok = false;
-    setError("contact", hasContact ? "" : t("err_contact"));
-    if (!hasContact) { document.querySelector('[data-field="phone"]').classList.add("field--invalid"); ok = false; }
     if (!isCard && !selectedCoin) { openCrypto(); setError("coin", t("err_coin")); ok = false; }
     if (!ok) {
       toast(t("err_fix"), "err");
@@ -438,6 +439,7 @@ function init() {
       const v = f[c.id]?.value.trim();
       if (v) contacts[c.id] = v;
     });
+    contacts.telegram = tgUsername(f.telegram.value); // required, stored as "@username"
 
     const countryName = COUNTRIES.find(([code]) => code === f.country.value)?.[1] || f.country.value;
     const stateVal = isUS ? f.state.value : "";

@@ -1,10 +1,10 @@
 // =============================================================================
 //  ui.js — shared chrome: header, footer, theme, toasts, icons, helpers
 // =============================================================================
-import { SITE } from "./config.js?v=28";
-import { Cart } from "./store.js?v=28";
-import { getPublishedSettings } from "./db.js?v=28";
-import { t, getLang, setLang, LANGUAGES } from "./i18n.js?v=28";
+import { SITE } from "./config.js?v=29";
+import { Cart } from "./store.js?v=29";
+import { getPublishedSettings } from "./db.js?v=29";
+import { t, getLang, setLang, LANGUAGES } from "./i18n.js?v=29";
 
 // ---- Icons (inline SVG, Lucide-style) --------------------------------------
 export const icon = (name, size = 20) => {
