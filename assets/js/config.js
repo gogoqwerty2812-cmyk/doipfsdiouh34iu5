@@ -226,6 +226,7 @@ export const PROMO_CODES = Object.freeze({
   ego20: 20,
   testosterone25: 25,
   egolab2027: 13,
+  gear10: 10,
 });
 
 // -----------------------------------------------------------------------------
