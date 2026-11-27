@@ -1,6 +1,6 @@
-import { SITE, ORDER_STATUSES } from "../config.js?v=30";
-import { getProducts, saveProduct, deleteProduct, getOrders, updateOrderStatus, deleteOrder, getTickets, deleteTicket, ensureAdminSeed, exportProductsJSON, importProductsFromJSON, getCerts, saveCert, deleteCert, ensureCertAdminSeed, exportCertsJSON, importCertsFromJSON, getReviews, saveReview, deleteReview, ensureReviewAdminSeed, exportReviewsJSON, importReviewsFromJSON, getSettings, saveSettings, ensureSettingsAdminSeed, exportSettingsJSON, exportAllJSON, importAllFromJSON } from "../db.js?v=30";
-import { icon, money, esc, placeholder, initTheme, mountChrome, toast } from "../ui.js?v=30";
+import { SITE, ORDER_STATUSES } from "../config.js?v=31";
+import { getProducts, saveProduct, deleteProduct, getOrders, updateOrderStatus, deleteOrder, getTickets, deleteTicket, ensureAdminSeed, exportProductsJSON, importProductsFromJSON, getCerts, saveCert, deleteCert, ensureCertAdminSeed, exportCertsJSON, importCertsFromJSON, getReviews, saveReview, deleteReview, ensureReviewAdminSeed, exportReviewsJSON, importReviewsFromJSON, getSettings, saveSettings, ensureSettingsAdminSeed, exportSettingsJSON, exportAllJSON, importAllFromJSON } from "../db.js?v=31";
+import { icon, money, esc, placeholder, initTheme, mountChrome, toast } from "../ui.js?v=31";
 
 initTheme();
 
@@ -80,7 +80,6 @@ function renderLogin() {
             <div class="error-text"></div>
           </div>
           <button class="btn btn--primary btn--block btn--lg" type="submit">${icon("shield", 18)} Enter dashboard</button>
-          <p class="hint" style="text-align:center">Dev tool — default password is set in <code>assets/js/config.js</code>.</p>
         </form>
       </div>
     </div>`;
